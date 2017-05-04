@@ -5,7 +5,16 @@ import spark.Spark;
 public class Main {
 
     public static void main(String[] args) {
-        Spark.get("/hello", (req, res) -> "Hello World");
+
+        Spark.staticFiles.location("/public");
+        // Spark.staticFiles.externalLocation("C:/tmp/easy-command/");
+
+        Spark.get("/hello", (req, res) -> {
+
+            Thread.sleep(10_000);
+
+            return "Command executed !!";
+        });
     }
 
 }
