@@ -30,13 +30,17 @@
 				<div class="panel-body">
 					<div id="message">&nbsp;</div>
 				</div>
+				<div class="panel-body">
+					<div id="chat">&nbsp;</div>
+				</div>
 			</div>
 		</div>
 	</div>
 	
 	<div class="row">
 		<div class="col-md-6 col-offset-3">
-			<button id="send" type="button" class="btn btn-lg btn-primary">Send command</button>
+			<button id="send"    type="button" class="btn btn-lg btn-primary">Send command</button>
+			<button id="sendMsg" type="button" class="btn btn-lg btn-primary">Send message</button>
 		</div>
 	</div>
 
@@ -51,6 +55,26 @@ $('#send').click(function(){
 		$('#message').html(data);
 	})
 })
+
+$('#sendMsg').click(function(){
+	$('#message').html("sent !");
+	sendMessage('test');
+})
+
+var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat");
+webSocket.onmessage = function (msg) { updateChat(msg); };
+webSocket.onclose = function () { alert("WebSocket connection closed") };
+
+//Update the chat-panel, and the list of connected users
+function updateChat(msg) {
+    var data = JSON.parse(msg.data);
+    $('#chat').append(data.userMessage).append('<br>');
+}
+
+function sendMessage(message) {
+    webSocket.send(message);
+}
+
 
 </script>
 
