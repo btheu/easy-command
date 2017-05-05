@@ -68,6 +68,11 @@
 			<artifactId>json</artifactId>
 			<version>20160810</version>
 		</dependency>
+		<dependency>
+			<groupId>net.engio</groupId>
+			<artifactId>mbassador</artifactId>
+			<version>1.2.4.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
