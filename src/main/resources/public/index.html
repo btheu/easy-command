@@ -91,6 +91,7 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
 
+var wsProtocol = location.protocol == 'http:' ? 'ws:' : 'wss:';
 
 $('#sendMsg').click(function(){
 	$('#statusChat').html("sent !");
@@ -106,7 +107,7 @@ $('#sendCmd').click(function(){
 })
 
 
-var webSocketList = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command/list");
+var webSocketList = new WebSocket(wsProtocol + "//" + location.hostname + ":" + location.port + "/command/list");
 webSocketList.onmessage = function (msg) { updateCommandList(msg); };
 webSocketList.onclose = function () { alert("WebSocket Command List connection closed") };
 
@@ -136,7 +137,7 @@ var webSocketConsult;
 
 function consult(command){
 	webSocketConsult && webSocketConsult.close();
-	webSocketConsult = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command?command="+encodeURIComponent(command));
+	webSocketConsult = new WebSocket(wsProtocol + "//" + location.hostname + ":" + location.port + "/command?command="+encodeURIComponent(command));
 	webSocketConsult.onmessage = function (msg) { updateConsult(msg); };
 	webSocketConsult.onclose = function () {  };
 
@@ -155,7 +156,7 @@ function updateConsult(msg) {
 
 
 
-var webSocketCommand = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command");
+var webSocketCommand = new WebSocket(wsProtocol + "//" + location.hostname + ":" + location.port + "/command");
 webSocketCommand.onmessage = function (msg) { updateCommand(msg); };
 webSocketCommand.onclose = function () { alert("WebSocket Command connection closed") };
 
@@ -165,7 +166,7 @@ function updateCommand(msg) {
 }
 
 
-var webSocketChat = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat");
+var webSocketChat = new WebSocket(wsProtocol + "//" + location.hostname + ":" + location.port + "/chat");
 webSocketChat.onmessage = function (msg) { updateChat(msg); };
 webSocketChat.onclose = function () { alert("WebSocket Chat connection closed") };
 
