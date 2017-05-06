@@ -23,56 +23,87 @@
 
 	<div class="row">
 		<div class="col-md-6 col-offset-3">
+			<button id="sendMsg" type="button" class="btn btn-lg btn-primary">Send message</button>
+		</div>
+		<div class="col-md-6 col-offset-3">
+			<button id="sendCmd" type="button" class="btn btn-lg btn-primary">Send command</button>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6 col-offset-3">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">Chat</h3>
+				</div>
+				<div class="panel-body">
+					<div id="statusChat">&nbsp;</div>
+				</div>
+				<div class="panel-body">
+					<div id="messageChat">&nbsp;</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-6 col-offset-3">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Command</h3>
 				</div>
 				<div class="panel-body">
-					<div id="message">&nbsp;</div>
+					<div id="statusCommand">&nbsp;</div>
 				</div>
 				<div class="panel-body">
-					<div id="chat">&nbsp;</div>
+					<div id="messageCommand">&nbsp;</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	
-	<div class="row">
-		<div class="col-md-6 col-offset-3">
-			<button id="send"    type="button" class="btn btn-lg btn-primary">Send command</button>
-			<button id="sendMsg" type="button" class="btn btn-lg btn-primary">Send message</button>
-		</div>
-	</div>
+
 
 </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script type="text/javascript">
 
-$('#send').click(function(){
-	$('#message').html('Performing command...');
-	$.get('/hello').done(function(data) {
-		$('#message').html(data);
-	})
-})
 
 $('#sendMsg').click(function(){
-	$('#message').html("sent !");
+	$('#statusChat').html("sent !");
 	sendMessage('test');
 })
 
-var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat");
-webSocket.onmessage = function (msg) { updateChat(msg); };
-webSocket.onclose = function () { alert("WebSocket connection closed") };
+$('#sendCmd').click(function(){
+	$('#statusCommand').html('Performing command...');
+	$.post('/command').done(function(data) {
+		$('#statusCommand').html('');
+		$('#messageCommand').html(data);
+	})
+})
+
+var webSocketCommand = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command");
+webSocketCommand.onmessage = function (msg) { updateCommand(msg); };
+webSocketCommand.onclose = function () { alert("WebSocket Command connection closed") };
+
+//Update the chat-panel, and the list of connected users
+function updateCommand(msg) {
+	var data = JSON.parse(msg.data);
+    $('#messageCommand').append(data.message).append('<br>');
+}
+
+
+var webSocketChat = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat");
+webSocketChat.onmessage = function (msg) { updateChat(msg); };
+webSocketChat.onclose = function () { alert("WebSocket Chat connection closed") };
 
 //Update the chat-panel, and the list of connected users
 function updateChat(msg) {
     var data = JSON.parse(msg.data);
-    $('#chat').append(data.userMessage).append('<br>');
+    $('#messageChat').append(data.userMessage).append('<br>');
 }
 
 function sendMessage(message) {
-    webSocket.send(message);
+	webSocketChat.send(message);
 }
 
 

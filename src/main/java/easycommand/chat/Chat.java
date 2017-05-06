@@ -1,4 +1,4 @@
-package easycommand;
+package easycommand.chat;
 
 import static j2html.TagCreator.article;
 import static j2html.TagCreator.b;

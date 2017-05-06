@@ -1,5 +1,6 @@
 package easycommand.core.impl;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -7,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 import easycommand.core.Command;
 import easycommand.core.CommandExecutor;
 import easycommand.core.CommandRunnable;
+import easycommand.event.AddedEvent;
+import easycommand.event.EventBus;
 
 public class DefaultCommandExecutor implements CommandExecutor {
 
@@ -15,11 +18,19 @@ public class DefaultCommandExecutor implements CommandExecutor {
     @Override
     public void submit(Command command) {
 
+        this.onSubmit(command);
+
         CommandRunnable runnable = new SimpleCommandRunnable();
         runnable.prepare(command);
 
         executor.execute(runnable);
 
+    }
+
+    protected void onSubmit(Command command) {
+        AddedEvent event = new AddedEvent();
+        event.setMessage("Command: " + Arrays.toString(command.command()));
+        EventBus.post(event);
     }
 
     @Override

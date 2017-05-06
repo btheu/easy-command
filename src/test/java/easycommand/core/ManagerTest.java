@@ -10,10 +10,9 @@ import easycommand.event.StartEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.engio.mbassy.listener.Handler;
 import net.engio.mbassy.listener.Listener;
-import net.engio.mbassy.listener.References;
 
 @Slf4j
-@Listener(references = References.Strong)
+@Listener
 public class ManagerTest {
 
     @Test
