@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -29,10 +30,56 @@ public class CommandDispatch {
     // user who want to know the list of command
     public static List<Session> usersList = Collections.synchronizedList(new ArrayList<>());
 
+    // user who want to know events of a specific command
     public static Map<Session, String> usersByCommand = new ConcurrentHashMap<>();
 
     // key: command
     public static Map<String, String> commandByState = new ConcurrentHashMap<>();
+
+    private void closeAndRemoveConsult(String command) {
+        List<Entry<Session, String>> collect = usersByCommand.entrySet().stream().peek(e -> {
+            log.info("{} =? {}", command, e.getValue());
+        }).filter(e -> {
+            return e.getValue().equalsIgnoreCase(command);
+        }).map(entry -> {
+            return entry;
+        }).collect(Collectors.toList());
+
+        collect.forEach(entry -> {
+            try {
+                JSONObject response = new JSONObject();
+                response.put("message", "Disconnecting");
+
+                String valueOf = String.valueOf(response);
+                entry.getKey().getRemote().sendString(valueOf);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            entry.getKey().close();
+
+            usersByCommand.remove(entry.getKey(), entry.getValue());
+        });
+
+    }
+
+    private void broadcastMessageToConsult(String command, String message) {
+        usersByCommand.entrySet().stream().peek(e -> {
+            log.info("{} =? {}", command, e.getValue());
+        }).filter(e -> {
+            return e.getValue().equalsIgnoreCase(command);
+        }).forEach(entry -> {
+            try {
+                JSONObject response = new JSONObject();
+                response.put("message", message);
+
+                String valueOf = String.valueOf(response);
+                entry.getKey().getRemote().sendString(valueOf);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
     public static void broadcastMessageToAll(String message) {
         usersAll.stream().filter(Session::isOpen).forEach(session -> {
@@ -77,7 +124,6 @@ public class CommandDispatch {
         commandByState.put(message, state);
 
         broadcastMessageToList();
-
     }
 
     @Handler
@@ -86,6 +132,8 @@ public class CommandDispatch {
 
         log.debug("{} ", event.getMessage());
         broadcastMessageToAll(event.getMessage());
+
+        broadcastMessageToConsult(event.getCommand(), event.getMessage());
     }
 
     @Handler
@@ -94,6 +142,8 @@ public class CommandDispatch {
 
         log.debug("{} ", event.getMessage());
         broadcastMessageToAll(event.getMessage());
+
+        broadcastMessageToConsult(event.getCommand(), event.getMessage());
     }
 
     @Handler
@@ -101,6 +151,8 @@ public class CommandDispatch {
 
         log.debug("{} ", event.getMessage());
         broadcastMessageToAll(event.getMessage());
+
+        broadcastMessageToConsult(event.getCommand(), event.getMessage());
     }
 
     @Handler
@@ -110,6 +162,9 @@ public class CommandDispatch {
         log.debug("{} ", event.getMessage());
         broadcastMessageToAll(event.getMessage());
 
+        broadcastMessageToConsult(event.getCommand(), event.getMessage());
+
+        closeAndRemoveConsult(event.getCommand());
         // TODO close specific user
     }
 

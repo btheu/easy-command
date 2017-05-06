@@ -6,6 +6,8 @@
 
 	<title>Easy Command</title>
 	
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	
@@ -14,6 +16,8 @@
 
 </head>
 <body>
+
+
 
 <div class="container theme-showcase">
 
@@ -83,8 +87,8 @@
 
 
 </div>
-
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
 
 
@@ -113,17 +117,48 @@ function updateCommandList(msg) {
     //$('#commandList').html(msg.data).append('<br>');
     $('#commandList').html('');
 	$(data.commands).each(function(index, item){
-	    $('#commandList').append(item.command).append(item.state).append('<br>');
+	    var dom = $('#commandList');
+		if(item.state == 'running'){
+			var test = $('<button/>',{
+		        class: 'btn btn-sm btn-link',
+				text: 'Consult',
+		        click: function () { consult(item.command); }
+		    });
+			dom.append(test);
+		}
+		
+		dom.append(item.command).append(item.state).append('<br>');
 	})
 	
 }
+
+var webSocketConsult;
+
+function consult(command){
+	
+	webSocketConsult = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command?command="+command);
+	webSocketConsult.onmessage = function (msg) { updateConsult(msg); };
+	webSocketConsult.onclose = function () {  };
+
+	
+	$('#dialogBody').html('');
+	
+	$('#dialog').dialog( {title: command } );
+	
+	$( "#dialog" ).dialog( "open" );
+}
+
+function updateConsult(msg) {
+	var data = JSON.parse(msg.data);
+    $('#dialogBody').append(data.message).append('<br>');
+}
+
 
 
 var webSocketCommand = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command");
 webSocketCommand.onmessage = function (msg) { updateCommand(msg); };
 webSocketCommand.onclose = function () { alert("WebSocket Command connection closed") };
 
-//Update the chat-panel, and the list of connected users
 function updateCommand(msg) {
 	var data = JSON.parse(msg.data);
     $('#messageCommand').append(data.message).append('<br>');
@@ -145,6 +180,19 @@ function sendMessage(message) {
 }
 
 
+</script>
+
+
+<!-- LE CONTENU DE LA POPUP -->
+
+<div id="dialog" title="Basic dialog">
+  <p id="dialogBody"></p>
+</div>
+
+<script type="text/javascript">
+$( '#dialog' ).dialog({
+	autoOpen: false
+});
 </script>
 
 </body>
