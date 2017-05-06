@@ -3,7 +3,9 @@ package easycommand.event;
 import lombok.Data;
 
 @Data
-public class FinishEvent implements CommandEvent {
+public class StartedEvent implements CommandEvent {
+
+    private String command;
 
     private String message;
 

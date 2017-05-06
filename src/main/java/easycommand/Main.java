@@ -6,17 +6,18 @@ import java.io.InputStreamReader;
 
 import easycommand.chat.ChatWebSocketHandler;
 import easycommand.core.Command;
-import easycommand.core.CommandCollector;
+import easycommand.core.CommandDispatch;
 import easycommand.core.CommandExecutor;
-import easycommand.core.CommandWebSocketHandler;
 import easycommand.core.impl.BasicCommand;
 import easycommand.core.impl.DefaultCommandExecutor;
 import easycommand.event.EventBus;
+import easycommand.ws.CommandListWebSocketHandler;
+import easycommand.ws.CommandWebSocketHandler;
 import spark.Spark;
 
 public class Main {
 
-    public static CommandCollector collector = new CommandCollector();
+    public static CommandDispatch collector = new CommandDispatch();
 
     public static CommandExecutor executor = new DefaultCommandExecutor();
     static {
@@ -24,17 +25,22 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
         Spark.staticFiles.location("/public");
         // Spark.staticFiles.externalLocation("C:/tmp/easy-command/");
 
+        // 3 hours
+        Spark.webSocketIdleTimeoutMillis(3 * 60 * 60 * 1_000);
         Spark.webSocket("/chat", ChatWebSocketHandler.class);
 
         Spark.webSocket("/command", CommandWebSocketHandler.class);
 
+        Spark.webSocket("/command/list", CommandListWebSocketHandler.class);
+
         Spark.post("/command", (req, res) -> {
 
-            Command command = new BasicCommand("Via Post");
+            String commandString = req.queryParams("command");
+
+            Command command = new BasicCommand(commandString);
 
             executor.submit(command);
 

@@ -22,7 +22,7 @@ public class Chat {
     // Used for creating the next username
     static int nextUserNumber = 1;
 
-    // Sends a message from one user to all users, along with a list of current
+    // Sends a message from one user to all usersAll, along with a list of current
     // usernames
     public static void broadcastMessage(String sender, String message) {
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {

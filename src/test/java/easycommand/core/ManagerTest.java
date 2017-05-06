@@ -6,7 +6,7 @@ import easycommand.core.impl.BasicCommand;
 import easycommand.core.impl.DefaultCommandExecutor;
 import easycommand.event.EventBus;
 import easycommand.event.ProgressEvent;
-import easycommand.event.StartEvent;
+import easycommand.event.StartedEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.engio.mbassy.listener.Handler;
 import net.engio.mbassy.listener.Listener;
@@ -37,7 +37,7 @@ public class ManagerTest {
     }
 
     @Handler
-    public void handle(StartEvent event) {
+    public void handle(StartedEvent event) {
         log.info("{} ", event.getMessage());
     }
 

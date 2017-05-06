@@ -5,9 +5,9 @@ import java.util.Arrays;
 import easycommand.core.Command;
 import easycommand.core.CommandRunnable;
 import easycommand.event.EventBus;
-import easycommand.event.FinishEvent;
+import easycommand.event.FinishedEvent;
 import easycommand.event.ProgressEvent;
-import easycommand.event.StartEvent;
+import easycommand.event.StartedEvent;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,18 +49,20 @@ public class SimpleCommandRunnable implements CommandRunnable {
     protected void onFinish() {
         String string = Arrays.toString(command.command());
 
-        FinishEvent event = new FinishEvent();
-
-        event.setMessage("finished : " + string);
+        FinishedEvent event = new FinishedEvent();
+        event.setCommand(string);
+        event.setMessage("finished: " + string);
 
         EventBus.post(event);
 
     }
 
-    protected void onProgress(String string) {
-        ProgressEvent event = new ProgressEvent();
+    protected void onProgress(String message) {
+        String string = Arrays.toString(command.command());
 
-        event.setMessage("progress : " + string);
+        ProgressEvent event = new ProgressEvent();
+        event.setCommand(string);
+        event.setMessage("in progress: " + message);
 
         EventBus.post(event);
 
@@ -69,9 +71,9 @@ public class SimpleCommandRunnable implements CommandRunnable {
     protected void onStart() {
         String string = Arrays.toString(command.command());
 
-        StartEvent event = new StartEvent();
-
-        event.setMessage("starting command: " + string);
+        StartedEvent event = new StartedEvent();
+        event.setCommand(string);
+        event.setMessage("starting: " + string);
 
         EventBus.post(event);
 

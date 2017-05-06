@@ -28,8 +28,11 @@ public class DefaultCommandExecutor implements CommandExecutor {
     }
 
     protected void onSubmit(Command command) {
+        String string = Arrays.toString(command.command());
+
         AddedEvent event = new AddedEvent();
-        event.setMessage("Command: " + Arrays.toString(command.command()));
+        event.setCommand(string);
+        event.setMessage("added: " + string);
         EventBus.post(event);
     }
 

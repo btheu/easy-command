@@ -1,4 +1,4 @@
-package easycommand.core;
+package easycommand.ws;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -6,17 +6,19 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
+import easycommand.core.CommandDispatch;
+
 @WebSocket
-public class CommandWebSocketHandler {
+public class CommandListWebSocketHandler {
 
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
-        CommandCollector.users.put(user, "");
+        CommandDispatch.usersList.add(user);
     }
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
-        CommandCollector.users.remove(user);
+        CommandDispatch.usersList.remove(user);
     }
 
     @OnWebSocketMessage
