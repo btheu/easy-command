@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SimpleCommandRunnable implements CommandRunnable {
 
-    private Command command;
+    protected Command command;
 
     @Override
     public void prepare(Command command) {
@@ -25,14 +25,23 @@ public class SimpleCommandRunnable implements CommandRunnable {
 
         this.onStart();
 
+        try {
+            this.start();
+            this.onFinish();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            this.onError();
+        }
+
+    }
+
+    protected void start() throws Exception {
         int i = 0;
         while ((i++) < 20) {
 
             String string = Arrays.toString(command.command());
 
             this.onProgress(string + " " + i);
-
-            // log.info("running {}", string);
 
             long waitSec = (long) (2 + Math.random() * 1.0);
 
@@ -42,8 +51,6 @@ public class SimpleCommandRunnable implements CommandRunnable {
                 e.printStackTrace();
             }
         }
-
-        this.onFinish();
     }
 
     protected void onFinish() {
@@ -55,6 +62,10 @@ public class SimpleCommandRunnable implements CommandRunnable {
 
         EventBus.post(event);
 
+    }
+
+    protected void onError() {
+        this.onFinish();
     }
 
     protected void onProgress(String message) {

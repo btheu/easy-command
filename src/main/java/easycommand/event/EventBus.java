@@ -11,7 +11,7 @@ public class EventBus {
     }
 
     public static void post(CommandEvent event) {
-        bus.post(event).asynchronously();
+        bus.post(event).now();
     }
 
 }

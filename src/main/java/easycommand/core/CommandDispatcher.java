@@ -22,7 +22,7 @@ import net.engio.mbassy.listener.Listener;
 
 @Slf4j
 @Listener
-public class CommandDispatch {
+public class CommandDispatcher {
 
     // user who want to know all events
     public static List<Session> usersAll = Collections.synchronizedList(new ArrayList<>());
@@ -120,15 +120,19 @@ public class CommandDispatch {
         });
     }
 
-    private void updateSate(String message, String state) {
-        commandByState.put(message, state);
+    private void updateState(String command, String state) {
 
-        broadcastMessageToList();
+        String oldState = commandByState.get(command);
+        if (oldState == null || !oldState.equalsIgnoreCase(state)) {
+            commandByState.put(command, state);
+
+            broadcastMessageToList();
+        }
     }
 
     @Handler
     public void handle(AddedEvent event) {
-        updateSate(event.getCommand(), "added");
+        updateState(event.getCommand(), "added");
 
         log.debug("{} ", event.getMessage());
         broadcastMessageToAll(event.getMessage());
@@ -138,7 +142,7 @@ public class CommandDispatch {
 
     @Handler
     public void handle(StartedEvent event) {
-        updateSate(event.getCommand(), "running");
+        updateState(event.getCommand(), "running");
 
         log.debug("{} ", event.getMessage());
         broadcastMessageToAll(event.getMessage());
@@ -148,6 +152,7 @@ public class CommandDispatch {
 
     @Handler
     public void handle(ProgressEvent event) {
+        // updateState(event.getCommand(), "running");
 
         log.debug("{} ", event.getMessage());
         broadcastMessageToAll(event.getMessage());
@@ -157,7 +162,7 @@ public class CommandDispatch {
 
     @Handler
     public void handle(FinishedEvent event) {
-        updateSate(event.getCommand(), "finished");
+        updateState(event.getCommand(), "finished");
 
         log.debug("{} ", event.getMessage());
         broadcastMessageToAll(event.getMessage());

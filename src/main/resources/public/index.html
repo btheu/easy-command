@@ -135,8 +135,8 @@ function updateCommandList(msg) {
 var webSocketConsult;
 
 function consult(command){
-	
-	webSocketConsult = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command?command="+command);
+	webSocketConsult && webSocketConsult.close();
+	webSocketConsult = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command?command="+encodeURIComponent(command));
 	webSocketConsult.onmessage = function (msg) { updateConsult(msg); };
 	webSocketConsult.onclose = function () {  };
 

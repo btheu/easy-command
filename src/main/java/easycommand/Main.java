@@ -1,23 +1,20 @@
 package easycommand;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import easycommand.chat.ChatWebSocketHandler;
 import easycommand.core.Command;
-import easycommand.core.CommandDispatch;
+import easycommand.core.CommandDispatcher;
 import easycommand.core.CommandExecutor;
 import easycommand.core.impl.BasicCommand;
 import easycommand.core.impl.DefaultCommandExecutor;
 import easycommand.event.EventBus;
+import easycommand.utils.CliUtils;
 import easycommand.ws.CommandListWebSocketHandler;
 import easycommand.ws.CommandWebSocketHandler;
 import spark.Spark;
 
 public class Main {
 
-    public static CommandDispatch collector = new CommandDispatch();
+    public static CommandDispatcher collector = new CommandDispatcher();
 
     public static CommandExecutor executor = new DefaultCommandExecutor();
     static {
@@ -40,7 +37,7 @@ public class Main {
 
             String commandString = req.queryParams("command");
 
-            Command command = new BasicCommand(commandString);
+            Command command = new BasicCommand(CliUtils.parse(commandString));
 
             executor.submit(command);
 
@@ -56,20 +53,4 @@ public class Main {
 
         Spark.init();
     }
-
-    public static void run() {
-        String command = "netstat";
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-            System.out.println("the output stream is " + process.getOutputStream());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String s;
-            while ((s = reader.readLine()) != null) {
-                System.out.println("The inout stream is " + s);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

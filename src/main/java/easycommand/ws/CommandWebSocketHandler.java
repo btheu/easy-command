@@ -9,7 +9,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
-import easycommand.core.CommandDispatch;
+import easycommand.core.CommandDispatcher;
 
 @WebSocket
 public class CommandWebSocketHandler {
@@ -20,16 +20,16 @@ public class CommandWebSocketHandler {
         Map<String, List<String>> params = user.getUpgradeRequest().getParameterMap();
 
         if (params != null && params.containsKey("command")) {
-            CommandDispatch.usersByCommand.put(user, params.get("command").get(0));
+            CommandDispatcher.usersByCommand.put(user, params.get("command").get(0));
         } else {
-            CommandDispatch.usersAll.add(user);
+            CommandDispatcher.usersAll.add(user);
         }
 
     }
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
-        CommandDispatch.usersAll.remove(user);
+        CommandDispatcher.usersAll.remove(user);
     }
 
     @OnWebSocketMessage

@@ -20,7 +20,8 @@ public class DefaultCommandExecutor implements CommandExecutor {
 
         this.onSubmit(command);
 
-        CommandRunnable runnable = new SimpleCommandRunnable();
+        // CommandRunnable runnable = new SimpleCommandRunnable();
+        CommandRunnable runnable = new RuntimeCommandRunnable();
         runnable.prepare(command);
 
         executor.execute(runnable);
