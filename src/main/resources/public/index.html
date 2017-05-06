@@ -6,6 +6,8 @@
 
 	<title>Easy Command</title>
 	
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	
@@ -15,6 +17,8 @@
 </head>
 <body>
 
+
+
 <div class="container theme-showcase">
 
 	<div class="page-header">
@@ -22,36 +26,173 @@
 	</div>
 
 	<div class="row">
+
+		<div class="col-md-12">
+		
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">Command list</h3>
+				</div>
+				<div class="panel-body">
+					<div id="commandList"></div>
+				</div>
+			</div>
+		
+		</div>
+	</div>
+
+	<div class="row">
+
 		<div class="col-md-6 col-offset-3">
+			<p>
+			<input type="text" class="form-control" id="command_command" name="command" placeholder="your command">
+			</p>
+			<p>
+			<button id="sendCmd" type="button" class="btn btn-lg btn-primary">Send</button>
+			<p>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">Command</h3>
 				</div>
 				<div class="panel-body">
-					<div id="message">&nbsp;</div>
+					<div id="statusCommand">&nbsp;</div>
+				</div>
+				<div class="panel-body">
+					<div id="messageCommand"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-6 col-offset-3">
+			<p>
+			<input type="text" class="form-control" id="chat_message" name="message" placeholder="your message">
+			</p>
+			<p>
+			<button id="sendMsg" type="button" class="btn btn-lg btn-primary">Send</button>
+			<p>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">Chat</h3>
+				</div>
+				<div class="panel-body">
+					<div id="statusChat">&nbsp;</div>
+				</div>
+				<div class="panel-body">
+					<div id="messageChat"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 	
-	<div class="row">
-		<div class="col-md-6 col-offset-3">
-			<button id="send" type="button" class="btn btn-lg btn-primary">Send command</button>
-		</div>
-	</div>
+
 
 </div>
-
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
 
-$('#send').click(function(){
-	$('#message').html('Performing command...');
-	$.get('/hello').done(function(data) {
-		$('#message').html(data);
+
+$('#sendMsg').click(function(){
+	$('#statusChat').html("sent !");
+	sendMessage('test');
+})
+
+$('#sendCmd').click(function(){
+	$('#statusCommand').html('Performing command...');
+	var commandString = $('#command_command').val();
+	$.post('/command', { command : commandString } ).done(function(data) {
+		$('#statusCommand').html(data);
 	})
 })
 
+
+var webSocketList = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command/list");
+webSocketList.onmessage = function (msg) { updateCommandList(msg); };
+webSocketList.onclose = function () { alert("WebSocket Command List connection closed") };
+
+//Update the chat-panel, and the list of connected users
+function updateCommandList(msg) {
+	var data = JSON.parse(msg.data);
+	
+    //$('#commandList').html(msg.data).append('<br>');
+    $('#commandList').html('');
+	$(data.commands).each(function(index, item){
+	    var dom = $('#commandList');
+		if(item.state == 'running'){
+			var test = $('<button/>',{
+		        class: 'btn btn-sm btn-link',
+				text: 'Consult',
+		        click: function () { consult(item.command); }
+		    });
+			dom.append(test);
+		}
+		
+		dom.append(item.command).append(item.state).append('<br>');
+	})
+	
+}
+
+var webSocketConsult;
+
+function consult(command){
+	webSocketConsult && webSocketConsult.close();
+	webSocketConsult = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command?command="+encodeURIComponent(command));
+	webSocketConsult.onmessage = function (msg) { updateConsult(msg); };
+	webSocketConsult.onclose = function () {  };
+
+	
+	$('#dialogBody').html('');
+	
+	$('#dialog').dialog( {title: command } );
+	
+	$( "#dialog" ).dialog( "open" );
+}
+
+function updateConsult(msg) {
+	var data = JSON.parse(msg.data);
+    $('#dialogBody').append(data.message).append('<br>');
+}
+
+
+
+var webSocketCommand = new WebSocket("ws://" + location.hostname + ":" + location.port + "/command");
+webSocketCommand.onmessage = function (msg) { updateCommand(msg); };
+webSocketCommand.onclose = function () { alert("WebSocket Command connection closed") };
+
+function updateCommand(msg) {
+	var data = JSON.parse(msg.data);
+    $('#messageCommand').append(data.message).append('<br>');
+}
+
+
+var webSocketChat = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat");
+webSocketChat.onmessage = function (msg) { updateChat(msg); };
+webSocketChat.onclose = function () { alert("WebSocket Chat connection closed") };
+
+//Update the chat-panel, and the list of connected users
+function updateChat(msg) {
+    var data = JSON.parse(msg.data);
+    $('#messageChat').append(data.userMessage).append('<br>');
+}
+
+function sendMessage(message) {
+	webSocketChat.send(message);
+}
+
+
+</script>
+
+
+<!-- LE CONTENU DE LA POPUP -->
+
+<div id="dialog" title="Basic dialog">
+  <p id="dialogBody"></p>
+</div>
+
+<script type="text/javascript">
+$( '#dialog' ).dialog({
+	autoOpen: false
+});
 </script>
 
 </body>
