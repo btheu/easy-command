@@ -6,14 +6,20 @@ import easycommand.bean.Command;
 import easycommand.core.CommandRunnable;
 import easycommand.event.EventBus;
 import easycommand.event.FinishedEvent;
+import easycommand.event.KillEvent;
 import easycommand.event.ProgressEvent;
 import easycommand.event.StartedEvent;
 import lombok.extern.slf4j.Slf4j;
+import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Listener;
 
 @Slf4j
+@Listener
 public class SimpleCommandRunnable implements CommandRunnable {
 
     protected Command command;
+
+    protected boolean haveToStop = false;
 
     @Override
     public void prepare(Command command) {
@@ -50,6 +56,15 @@ public class SimpleCommandRunnable implements CommandRunnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Handler
+    protected void handle(KillEvent event) {
+        String string = Arrays.toString(command.command());
+
+        if (string.equals(event.getCommandId())) {
+            this.haveToStop = true;
         }
     }
 

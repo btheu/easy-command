@@ -119,12 +119,18 @@ function updateCommandList(data) {
 	$(data.commands).each(function(index, item){
 	    var dom = $('#commandList');
 		if(item.state == 'running'){
-			var test = $('<button/>',{
+			var bConsult = $('<button/>',{
 		        class: 'btn btn-sm btn-link',
 				text: 'Consult',
 		        click: function () { consult(item.command); }
 		    });
-			dom.append(test);
+			dom.append(bConsult);
+			var bKill = $('<button/>',{
+		        class: 'btn btn-sm btn-link',
+				text: 'Kill',
+		        click: function () { kill(item.command); }
+		    });
+			dom.append(bKill);
 		}
 		
 		dom.append(item.command).append(item.state).append('<br>');
@@ -146,6 +152,14 @@ function consult(command){
 	$('#dialog').dialog( {title: command } );
 	
 	$( "#dialog" ).dialog( "open" );
+}
+
+function kill(commandString){
+	$.ajax({
+	  method: 'POST',
+	  url: '/command/kill',
+	  data: { command : commandString }
+	});
 }
 
 function updateConsult(msg) {

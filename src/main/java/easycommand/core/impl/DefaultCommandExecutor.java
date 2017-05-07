@@ -10,10 +10,16 @@ import easycommand.core.CommandExecutor;
 import easycommand.core.CommandRunnable;
 import easycommand.event.AddedEvent;
 import easycommand.event.EventBus;
+import easycommand.event.KillEvent;
 
 public class DefaultCommandExecutor implements CommandExecutor {
 
     protected static ExecutorService executor = Executors.newFixedThreadPool(2);
+
+    @Override
+    public void kill(String commandId) {
+        EventBus.post(new KillEvent(commandId));
+    }
 
     @Override
     public void submit(Command command) {
@@ -22,10 +28,12 @@ public class DefaultCommandExecutor implements CommandExecutor {
 
         // CommandRunnable runnable = new SimpleCommandRunnable();
         CommandRunnable runnable = new RuntimeCommandRunnable();
+
+        EventBus.subscribe(runnable);
+
         runnable.prepare(command);
 
         executor.execute(runnable);
-
     }
 
     protected void onSubmit(Command command) {

@@ -35,6 +35,13 @@ public class Main {
 
         Spark.webSocket("/command/list", CommandListWebSocketHandler.class);
 
+        Spark.get("/command/list/", (req, res) -> {
+
+            CommandList list = dispatcher.getCommandList();
+
+            return list;
+        }, new GsonTransformer());
+
         Spark.post("/command", (req, res) -> {
 
             String commandString = req.queryParams("command");
@@ -46,12 +53,14 @@ public class Main {
             return "ok";
         });
 
-        Spark.get("/command/list/", (req, res) -> {
+        Spark.post("/command/kill", (req, res) -> {
 
-            CommandList list = dispatcher.getCommandList();
+            String commandString = req.queryParams("command");
 
-            return list;
-        }, new GsonTransformer());
+            executor.kill(commandString);
+
+            return "ok";
+        });
 
         Spark.get("/hello", (req, res) -> {
 

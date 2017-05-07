@@ -11,4 +11,6 @@ public interface CommandExecutor {
      */
     public void waitForEnd();
 
+    public void kill(String commandId);
+
 }
