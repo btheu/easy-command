@@ -27,7 +27,13 @@ public class DefaultCommandExecutor implements CommandExecutor {
         this.onSubmit(command);
 
         // CommandRunnable runnable = new SimpleCommandRunnable();
-        CommandRunnable runnable = new RuntimeCommandRunnable();
+
+        CommandRunnable runnable;
+        if ("yes".equalsIgnoreCase(System.getenv("use.ssh"))) {
+            runnable = new SshCommandRunnable();
+        } else {
+            runnable = new RuntimeCommandRunnable();
+        }
 
         EventBus.subscribe(runnable);
 

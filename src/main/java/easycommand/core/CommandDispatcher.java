@@ -42,6 +42,8 @@ public class CommandDispatcher {
         List<Entry<Session, String>> collect = usersByCommand.entrySet().stream().peek(e -> {
             log.info("{} =? {}", command, e.getValue());
         }).filter(e -> {
+            return e.getKey().isOpen();
+        }).filter(e -> {
             return e.getValue().equalsIgnoreCase(command);
         }).map(entry -> {
             return entry;

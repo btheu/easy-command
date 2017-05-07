@@ -19,17 +19,20 @@ public class SimpleCommandRunnable implements CommandRunnable {
 
     protected Command command;
 
-    protected boolean haveToStop = false;
-
     @Override
     public void prepare(Command command) {
         this.command = command;
+    }
+
+    public void kill() {
     }
 
     @Override
     public void run() {
 
         this.onStart();
+
+        log.debug("Executing {}", String.join(" ", command.command()));
 
         try {
             this.start();
@@ -64,7 +67,7 @@ public class SimpleCommandRunnable implements CommandRunnable {
         String string = Arrays.toString(command.command());
 
         if (string.equals(event.getCommandId())) {
-            this.haveToStop = true;
+            this.kill();
         }
     }
 
