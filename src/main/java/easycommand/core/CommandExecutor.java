@@ -1,5 +1,7 @@
 package easycommand.core;
 
+import easycommand.bean.Command;
+
 public interface CommandExecutor {
 
     public void submit(Command command);

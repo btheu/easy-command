@@ -108,13 +108,12 @@ $('#sendCmd').click(function(){
 
 
 var webSocketList = new WebSocket(wsProtocol + "//" + location.hostname + ":" + location.port + "/command/list");
-webSocketList.onmessage = function (msg) { updateCommandList(msg); };
+webSocketList.onmessage = function (msg) { updateCommandList(JSON.parse(msg.data)); };
 webSocketList.onclose = function () { alert("WebSocket Command List connection closed") };
 
 //Update the chat-panel, and the list of connected users
-function updateCommandList(msg) {
-	var data = JSON.parse(msg.data);
-	
+function updateCommandList(data) {
+
     //$('#commandList').html(msg.data).append('<br>');
     $('#commandList').html('');
 	$(data.commands).each(function(index, item){
@@ -194,6 +193,11 @@ function sendMessage(message) {
 $( '#dialog' ).dialog({
 	autoOpen: false
 });
+
+$.get('/command/list/', function(data) {
+	updateCommandList(JSON.parse(data));
+});
+
 </script>
 
 </body>

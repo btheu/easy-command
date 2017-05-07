@@ -2,7 +2,7 @@ package easycommand.core.impl;
 
 import java.util.Arrays;
 
-import easycommand.core.Command;
+import easycommand.bean.Command;
 import easycommand.core.CommandRunnable;
 import easycommand.event.EventBus;
 import easycommand.event.FinishedEvent;

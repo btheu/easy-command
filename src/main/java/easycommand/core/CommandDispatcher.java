@@ -12,6 +12,8 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import easycommand.bean.CommandList;
+import easycommand.bean.CommandList.CommandState;
 import easycommand.event.AddedEvent;
 import easycommand.event.FinishedEvent;
 import easycommand.event.ProgressEvent;
@@ -96,8 +98,8 @@ public class CommandDispatcher {
     }
 
     public static void broadcastMessageToList() {
-        List<JSONObject> commands = commandByState.entrySet().stream().map(e -> {
 
+        List<JSONObject> commands = commandByState.entrySet().stream().map(e -> {
             JSONObject command = new JSONObject();
             command.put("command", e.getKey());
             command.put("state", e.getValue());
@@ -171,6 +173,21 @@ public class CommandDispatcher {
 
         closeAndRemoveConsult(event.getCommand());
         // TODO close specific user
+    }
+
+    public CommandList getCommandList() {
+
+        List<CommandState> commands = commandByState.entrySet().stream().map(e -> {
+            CommandState state = new CommandState();
+            state.setCommand(e.getKey());
+            state.setState(e.getValue());
+            return state;
+        }).collect(Collectors.toList());
+
+        CommandList list = new CommandList();
+        list.setCommands(commands);
+
+        return list;
     }
 
 }

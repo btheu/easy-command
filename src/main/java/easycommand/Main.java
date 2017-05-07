@@ -1,24 +1,26 @@
 package easycommand;
 
+import easycommand.bean.Command;
+import easycommand.bean.CommandList;
 import easycommand.chat.ChatWebSocketHandler;
-import easycommand.core.Command;
 import easycommand.core.CommandDispatcher;
 import easycommand.core.CommandExecutor;
 import easycommand.core.impl.BasicCommand;
 import easycommand.core.impl.DefaultCommandExecutor;
 import easycommand.event.EventBus;
 import easycommand.utils.CliUtils;
+import easycommand.utils.GsonTransformer;
 import easycommand.ws.CommandListWebSocketHandler;
 import easycommand.ws.CommandWebSocketHandler;
 import spark.Spark;
 
 public class Main {
 
-    public static CommandDispatcher collector = new CommandDispatcher();
+    public static CommandDispatcher dispatcher = new CommandDispatcher();
 
     public static CommandExecutor executor = new DefaultCommandExecutor();
     static {
-        EventBus.subscribe(collector);
+        EventBus.subscribe(dispatcher);
     }
 
     public static void main(String[] args) {
@@ -43,6 +45,13 @@ public class Main {
 
             return "ok";
         });
+
+        Spark.get("/command/list/", (req, res) -> {
+
+            CommandList list = dispatcher.getCommandList();
+
+            return list;
+        }, new GsonTransformer());
 
         Spark.get("/hello", (req, res) -> {
 

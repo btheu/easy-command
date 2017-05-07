@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import easycommand.core.Command;
+import easycommand.bean.Command;
 import easycommand.core.CommandExecutor;
 import easycommand.core.CommandRunnable;
 import easycommand.event.AddedEvent;

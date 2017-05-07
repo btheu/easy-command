@@ -1,6 +1,6 @@
 package easycommand.core.impl;
 
-import easycommand.core.Command;
+import easycommand.bean.Command;
 
 public class BasicCommand implements Command {
 

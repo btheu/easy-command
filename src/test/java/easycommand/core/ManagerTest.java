@@ -2,6 +2,7 @@ package easycommand.core;
 
 import org.junit.Test;
 
+import easycommand.bean.Command;
 import easycommand.core.impl.BasicCommand;
 import easycommand.core.impl.DefaultCommandExecutor;
 import easycommand.event.EventBus;

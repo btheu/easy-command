@@ -1,4 +1,4 @@
-package easycommand.core;
+package easycommand.bean;
 
 public interface Command {
 
