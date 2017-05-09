@@ -13,7 +13,7 @@ public class RuntimeCommandRunnable extends SimpleCommandRunnable {
     @Override
     protected void start() throws Exception {
 
-        process = Runtime.getRuntime().exec(command.command());
+        process = Runtime.getRuntime().exec(command.getCommands());
 
         log.debug("the output stream is {}", process.getOutputStream());
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

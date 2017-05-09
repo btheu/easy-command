@@ -3,8 +3,6 @@ package btheu.easy.command.core;
 import org.junit.Test;
 
 import btheu.easy.command.bean.Command;
-import btheu.easy.command.core.CommandExecutor;
-import btheu.easy.command.core.impl.BasicCommand;
 import btheu.easy.command.core.impl.DefaultCommandExecutor;
 import btheu.easy.command.event.EventBus;
 import btheu.easy.command.event.ProgressEvent;
@@ -22,13 +20,13 @@ public class ManagerTest {
 
         EventBus.subscribe(this);
 
-        Command cmd1 = new BasicCommand("Ma commande", "1");
+        Command cmd1 = new Command("Ma commande", "1");
 
         CommandExecutor manager = new DefaultCommandExecutor();
 
         manager.submit(cmd1);
 
-        Command cmd2 = new BasicCommand("Ma commande", "2");
+        Command cmd2 = new Command("Ma commande", "2");
 
         manager.submit(cmd2);
 

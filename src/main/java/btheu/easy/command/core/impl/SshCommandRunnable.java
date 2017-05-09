@@ -28,7 +28,7 @@ public class SshCommandRunnable extends SimpleCommandRunnable {
 
             try (final Session session = ssh.startSession()) {
 
-                process = session.exec(String.join(" ", command.command()));
+                process = session.exec(String.join(" ", command.getCommands()));
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String s;

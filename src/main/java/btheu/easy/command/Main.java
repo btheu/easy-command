@@ -5,7 +5,6 @@ import btheu.easy.command.bean.CommandList;
 import btheu.easy.command.chat.ChatWebSocketHandler;
 import btheu.easy.command.core.CommandDispatcher;
 import btheu.easy.command.core.CommandExecutor;
-import btheu.easy.command.core.impl.BasicCommand;
 import btheu.easy.command.core.impl.DefaultCommandExecutor;
 import btheu.easy.command.event.EventBus;
 import btheu.easy.command.utils.CliUtils;
@@ -46,7 +45,7 @@ public class Main {
 
             String commandString = req.queryParams("command");
 
-            Command command = new BasicCommand(CliUtils.parse(commandString));
+            Command command = new Command(CliUtils.parse(commandString));
 
             executor.submit(command);
 

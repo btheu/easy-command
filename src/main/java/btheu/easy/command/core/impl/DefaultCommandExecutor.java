@@ -26,8 +26,6 @@ public class DefaultCommandExecutor implements CommandExecutor {
 
         this.onSubmit(command);
 
-        // CommandRunnable runnable = new SimpleCommandRunnable();
-
         CommandRunnable runnable;
         if ("yes".equalsIgnoreCase(System.getenv("use.ssh"))) {
             runnable = new SshCommandRunnable();
@@ -43,7 +41,7 @@ public class DefaultCommandExecutor implements CommandExecutor {
     }
 
     protected void onSubmit(Command command) {
-        String string = Arrays.toString(command.command());
+        String string = Arrays.toString(command.commands);
 
         AddedEvent event = new AddedEvent();
         event.setCommand(string);

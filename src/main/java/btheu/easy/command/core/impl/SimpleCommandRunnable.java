@@ -32,7 +32,7 @@ public class SimpleCommandRunnable implements CommandRunnable {
 
         this.onStart();
 
-        log.debug("Executing {}", String.join(" ", command.command()));
+        log.debug("Executing {}", String.join(" ", command.getCommands()));
 
         try {
             this.start();
@@ -48,7 +48,7 @@ public class SimpleCommandRunnable implements CommandRunnable {
         int i = 0;
         while ((i++) < 20) {
 
-            String string = Arrays.toString(command.command());
+            String string = Arrays.toString(command.getCommands());
 
             this.onProgress(string + " " + i);
 
@@ -64,7 +64,7 @@ public class SimpleCommandRunnable implements CommandRunnable {
 
     @Handler
     protected void handle(KillEvent event) {
-        String string = Arrays.toString(command.command());
+        String string = Arrays.toString(command.getCommands());
 
         if (string.equals(event.getCommandId())) {
             this.kill();
@@ -72,7 +72,7 @@ public class SimpleCommandRunnable implements CommandRunnable {
     }
 
     protected void onFinish() {
-        String string = Arrays.toString(command.command());
+        String string = Arrays.toString(command.getCommands());
 
         FinishedEvent event = new FinishedEvent();
         event.setCommand(string);
@@ -87,7 +87,7 @@ public class SimpleCommandRunnable implements CommandRunnable {
     }
 
     protected void onProgress(String message) {
-        String string = Arrays.toString(command.command());
+        String string = Arrays.toString(command.getCommands());
 
         ProgressEvent event = new ProgressEvent();
         event.setCommand(string);
@@ -98,7 +98,7 @@ public class SimpleCommandRunnable implements CommandRunnable {
     }
 
     protected void onStart() {
-        String string = Arrays.toString(command.command());
+        String string = Arrays.toString(command.getCommands());
 
         StartedEvent event = new StartedEvent();
         event.setCommand(string);
