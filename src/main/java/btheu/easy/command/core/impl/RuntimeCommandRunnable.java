@@ -23,6 +23,8 @@ public class RuntimeCommandRunnable extends SimpleCommandRunnable {
             this.onProgress(s);
         }
 
+        process.waitFor();
+
         log.debug("Exit status: {}", process.exitValue());
     }
 
