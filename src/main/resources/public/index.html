@@ -199,7 +199,7 @@ Vue.component('command-input', {
 	},
 	methods : {
 		submit: function(){
-			this.$http.post( '/command?command='+this.command );
+			this.$http.post( '/command?command='+encodeURIComponent(this.command) );
 		}
 	}
 })
@@ -240,10 +240,10 @@ Vue.component('command-list', {
 		  this.showModal = true;
 	  },
       kill: function(item){
-    	  this.$http.post( '/command/kill?command='+item.command );
+    	  this.$http.post( '/command/kill?command='+encodeURIComponent(item.command) );
 	  },
       replay: function(item){
-    	  this.$http.post( '/command?command='+item.command );
+    	  this.$http.post( '/command?command='+encodeURIComponent(item.command) );
 	  }
   }
 })
