@@ -1,7 +1,9 @@
 #! /bin/groovy
-//import PipelineTools
 
+//import PipelineTools
 //def tools = new PipelineTools()
+
+@Library('utils') _
 
 node('slave') {
 
